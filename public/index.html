@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <!-- Toast notification -->
+    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+    <main id="app-shell" class="app-shell">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button id="menu-button" class="utility-button topbar-menu-button" type="button" aria-label="Toggle navigation">
+                    ☰
+                </button>
+                <span class="app-brand">
+                    <span class="app-brand-icon" aria-hidden="true">✦</span>
+                    Task Manager
+                </span>
+            </div>
+
+            <div class="topbar-center" aria-hidden="true">
+                <span class="topbar-shortcut-hint">Press <kbd>Ctrl K</kbd> to search</span>
+            </div>
+
+            <div class="topbar-actions" aria-label="Utility actions">
+                <button id="theme-toggle-button" class="utility-button" type="button" aria-label="Switch theme">
+                    ☾
+                </button>
+            </div>
+        </header>
+
+        <div class="workspace-shell">
+            <aside id="sidebar" class="sidebar" aria-label="Task navigation">
+                <div class="sidebar-header">
+                    <span class="sidebar-header-label">Lists</span>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <button class="nav-item is-active" type="button" data-view="my-day" aria-pressed="true">
+                        <span class="nav-icon">☀</span>
+                        <span class="nav-label">My Day</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="important" aria-pressed="false">
+                        <span class="nav-icon">★</span>
+                        <span class="nav-label">Important</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="planned" aria-pressed="false">
+                        <span class="nav-icon">🗓</span>
+                        <span class="nav-label">Planned</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="completed" aria-pressed="false">
+                        <span class="nav-icon">✓</span>
+                        <span class="nav-label">Completed</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="all-tasks" aria-pressed="false">
+                        <span class="nav-icon">☰</span>
+                        <span class="nav-label">All Tasks</span>
+                    </button>
+                </nav>
+
+                <div class="sidebar-divider" role="presentation"></div>
+
+                <section class="sidebar-summary" aria-labelledby="sidebar-summary-title">
+                    <h2 id="sidebar-summary-title" class="sidebar-summary-title">Summary</h2>
+                    <div class="sidebar-summary-row">
+                        <span class="summary-name">Total</span>
+                        <strong id="nav-total-count" class="summary-count">0</strong>
+                    </div>
+                    <div class="sidebar-summary-row">
+                        <span class="summary-name">Active</span>
+                        <strong id="nav-active-count" class="summary-count">0</strong>
+                    </div>
+                    <div class="sidebar-summary-row">
+                        <span class="summary-name">Done</span>
+                        <strong id="nav-completed-count" class="summary-count">0</strong>
+                    </div>
+                </section>
+            </aside>
+
+            <section class="main-area" aria-labelledby="page-title">
+                <header class="main-header">
+                    <div class="main-heading">
+                        <p class="eyebrow">Focused workspace</p>
+                        <h1 id="page-title">My Day</h1>
+                        <p id="today-label" class="today-label">Today</p>
+                    </div>
+
+                    <div class="workspace-search">
+                        <label class="sr-only" for="search-input">Search tasks</label>
+                        <span class="search-icon" aria-hidden="true">⌕</span>
+                        <input
+                            id="search-input"
+                            name="searchTasks"
+                            type="search"
+                            placeholder="Search tasks…"
+                            autocomplete="off"
+                        >
+                    </div>
+                </header>
+
+                <div class="main-controls">
+                    <div class="filter-group" aria-label="Filter tasks">
+                        <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">All</button>
+                        <button class="filter-button" type="button" data-filter="active" aria-pressed="false">Active</button>
+                        <button class="filter-button" type="button" data-filter="completed" aria-pressed="false">Completed</button>
+                    </div>
+
+                    <button id="clear-completed-button" class="button button-secondary clear-completed-button" type="button" disabled>
+                        Clear completed
+                    </button>
+                </div>
+
+                <div id="task-region" class="task-region">
+                    <div class="task-list-wrap">
+                        <div id="empty-state" class="empty-state" aria-live="polite">
+                            <svg class="empty-state-art" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <rect x="20" y="18" width="80" height="12" rx="6" fill="currentColor" opacity="0.12"/>
+                                <rect x="20" y="38" width="60" height="12" rx="6" fill="currentColor" opacity="0.08"/>
+                                <rect x="20" y="58" width="70" height="12" rx="6" fill="currentColor" opacity="0.06"/>
+                                <circle cx="8" cy="24" r="5" fill="currentColor" opacity="0.15"/>
+                                <circle cx="8" cy="44" r="5" fill="currentColor" opacity="0.1"/>
+                                <circle cx="8" cy="64" r="5" fill="currentColor" opacity="0.07"/>
+                            </svg>
+                            <p class="empty-state-text">No tasks yet.</p>
+                            <p class="empty-state-sub">Add one below to get started.</p>
+                        </div>
+                        <ul id="task-list" class="task-list" aria-live="polite"></ul>
+                    </div>
+
+                    <div class="add-task-wrap">
+                        <button id="open-modal-button" class="add-task-bar" type="button">
+                            <span class="add-task-icon" aria-hidden="true">＋</span>
+                            <span class="add-task-text">Add a task</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Inline delete confirmation -->
+    <div id="confirm-dialog" class="confirm-overlay" hidden>
+        <div class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+            <p id="confirm-title" class="confirm-title">Delete task?</p>
+            <p id="confirm-desc" class="confirm-desc"></p>
+            <div class="confirm-actions">
+                <button id="confirm-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="confirm-delete" class="button button-danger" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="task-modal" class="modal-overlay" hidden>
+        <section
+            class="modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+            aria-describedby="modal-step-label"
+        >
+            <div class="modal-topbar">
+                <div>
+                    <p id="modal-step-label" class="modal-step-label">Step 1 of 3</p>
+                    <h2 id="modal-title" class="modal-title">Create a task</h2>
+                </div>
+                <button id="close-modal-button" class="utility-button modal-close-button" type="button" aria-label="Close task form">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Step progress dots -->
+            <div class="step-dots" aria-hidden="true">
+                <span class="step-dot is-active" data-dot="1"></span>
+                <span class="step-dot" data-dot="2"></span>
+                <span class="step-dot" data-dot="3"></span>
+            </div>
+
+            <form id="task-form" class="modal-form" novalidate>
+                <div class="step-panels">
+                    <section class="modal-step is-active" data-step="1" aria-label="Task title">
+                        <div class="field title-field">
+                            <div class="field-label-row">
+                                <label for="task-title">Task title</label>
+                                <span id="char-count" class="char-count">0 / 80</span>
+                            </div>
+                            <input
+                                id="task-title"
+                                name="taskTitle"
+                                type="text"
+                                placeholder="e.g. Finish JavaScript practice"
+                                maxlength="80"
+                                autocomplete="off"
+                                aria-describedby="title-error"
+                            >
+                            <p id="title-error" class="field-error" aria-live="polite" hidden>Please enter a task title.</p>
+                        </div>
+                    </section>
+
+                    <section class="modal-step" data-step="2" aria-labelledby="step-date-heading" hidden>
+                        <div class="step-copy compact-step-copy">
+                            <h3 id="step-date-heading">Choose dates</h3>
+                        </div>
+
+                        <div class="date-range-grid">
+                            <div class="field date-card">
+                                <label for="task-start-date"><span aria-hidden="true">📅</span> Start date</label>
+                                <input id="task-start-date" name="taskStartDate" type="date" inputmode="none" autocomplete="off">
+                            </div>
+
+                            <div class="field date-card">
+                                <label for="task-end-date"><span aria-hidden="true">🏁</span> End date</label>
+                                <input id="task-end-date" name="taskEndDate" type="date" inputmode="none" autocomplete="off" aria-describedby="date-error">
+                            </div>
+                        </div>
+
+                        <p id="date-error" class="field-error" aria-live="polite" hidden>End date cannot be earlier than start date.</p>
+                    </section>
+
+                    <section class="modal-step" data-step="3" aria-labelledby="step-priority-heading" hidden>
+                        <div class="step-copy compact-step-copy">
+                            <h3 id="step-priority-heading">Choose priority</h3>
+                        </div>
+
+                        <fieldset class="priority-field">
+                            <legend class="sr-only">Priority</legend>
+                            <div class="priority-options" role="radiogroup" aria-label="Priority">
+                                <label class="priority-option priority-low-option">
+                                    <input type="radio" name="taskPriority" value="low">
+                                    <span class="priority-option-icon" aria-hidden="true">●</span>
+                                    <span class="priority-option-text">Low</span>
+                                </label>
+
+                                <label class="priority-option priority-medium-option is-selected">
+                                    <input type="radio" name="taskPriority" value="medium" checked>
+                                    <span class="priority-option-icon" aria-hidden="true">◆</span>
+                                    <span class="priority-option-text">Medium</span>
+                                </label>
+
+                                <label class="priority-option priority-high-option">
+                                    <input type="radio" name="taskPriority" value="high">
+                                    <span class="priority-option-icon" aria-hidden="true">⚡</span>
+                                    <span class="priority-option-text">High</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </section>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="back-button" class="button button-secondary" type="button" hidden>← Back</button>
+                    <div class="modal-action-spacer"></div>
+                    <button id="next-button" class="button button-secondary" type="button">Next →</button>
+                    <button id="submit-button" class="button button-accent" type="submit" hidden>Save Task</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</body>
+</html>

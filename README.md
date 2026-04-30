@@ -1,5 +1,10 @@
 # Task Manager
 
+## Preview
+
+![Preview](./public/files/preview.png)
+
+
 ## Project Description
 
 Task Manager is a small task management app built with plain HTML, CSS, vanilla JavaScript, and a Node.js + Express backend.
